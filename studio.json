@@ -3,7 +3,11 @@
   "budget_usd": 5,
   "aspect": "9:16",
   "gulab_board": null,
-  "ref_urls": {},
+  "ref_urls": {
+    "bible/sheet_heroes.png": "https://gulab.ai/api/media/exports/1794067691322-sheet_heroes.png",
+    "bible/sheet_ravana.png": "https://gulab.ai/api/media/exports/1794067699815-sheet_ravana.png",
+    "bible/set_hut.png": "https://gulab.ai/api/media/exports/1794067707088-set_hut.png"
+  },
   "voice": null,
   "models": {
     "still": "google/nano-banana-2.1",
