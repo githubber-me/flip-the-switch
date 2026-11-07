@@ -1,0 +1,32 @@
+{
+  "title": "The Golden Deer's Trap",
+  "shots": [
+    {
+      "id": "s01",
+      "seconds": 4,
+      "picture": "Sita at the hut's threshold, a golden deer grazing in dappled late-sun light beyond the clearing",
+      "motion": "Real-time speed, NOT slow motion. She steps forward and points at the deer, bells chiming at her ankle. Keep the same look, no text, no new objects",
+      "vo": "ಆ ಚಿನ್ನದ ಜಿಂಕೆಯನ್ನು ನೋಡಿ!",
+      "vo_english": "Look at that golden deer!",
+      "source": "paraphrased (Aranya Kanda)"
+    },
+    {
+      "id": "s02",
+      "seconds": 4,
+      "picture": "Close on the golden deer's eye among its fur",
+      "motion": "Real-time speed, NOT slow motion. The eye narrows unnaturally, not blinking like an animal's. Keep the same look, no text, no new objects",
+      "vo": "ಈ ಜಿಂಕೆಯ ಕಣ್ಣು ವಿಚಿತ್ರವಾಗಿದೆ",
+      "vo_english": "This deer's eye looks strange",
+      "source": "invented"
+    },
+    {
+      "id": "s03",
+      "seconds": 4,
+      "picture": "Sita glances down: her shadow stretches long across the earth in the low golden-hour light, but the golden deer beside her casts none",
+      "motion": "Real-time speed, NOT slow motion. Her gaze drops to the shadowless ground then snaps up, fear dawning on her face; she steps back sharply, hand clutching the end of her sari. Mouth stays closed; narration plays over the shot. Keep the same look, no text, no new objects",
+      "vo": "ಇದು ಜಿಂಕೆಯಲ್ಲ, ಮಾಯೆ!",
+      "vo_english": "This is not a deer, it is an illusion!",
+      "source": "invented"
+    }
+  ]
+}

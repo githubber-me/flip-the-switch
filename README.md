@@ -19,7 +19,7 @@ You post a brief. The crew works in one thread:
 | `animator` | Clips from approved stills only | You approve each paid clip on a permission card |
 | `editor` | Voice, music, final cut | |
 
-**Your veto is the budget gate.** Stills cost about $0.10 each and a 5-second clip about $0.67, so you catch problems while they are cheap.
+**Your veto is the budget gate.** Stills cost about $0.14 each and a 5-second clip about $0.67, so you catch problems while they are cheap.
 
 ## How Switch is used
 Without Switch there is no workflow here, only a command-line tool.
@@ -29,7 +29,7 @@ Without Switch there is no workflow here, only a command-line tool.
 | **Room and threads** | Every agent and the director work in one channel. Handoffs happen by mention, so each agent starts when the last one finishes. |
 | **Room instructions** | The style bible and working rules. Every agent gets them on joining ([`crew/ROOM-INSTRUCTIONS.md`](crew/ROOM-INSTRUCTIONS.md)). |
 | **Room document** | `decisions-log`: every ruling, with your reason, plus standing rules. It lives in the room, so it outlasts any agent's session. |
-| **Permission cards** | The animator runs with Auto mode off, so a paid clip waits for your answer in the room. |
+| **Permission cards** | The animator runs with Auto mode off, so a paid clip waits for your answer in the room. The card appears in the animator's thread. Choose **Allow once** on `generate_video`. |
 | **Attachments** | Stills and the final cut are reviewed in the thread. |
 
 ```mermaid
@@ -52,6 +52,9 @@ flowchart LR
 ```
 
 The agents share this repository for heavy media files in `productions/<slug>/`. Decisions, handoffs and approvals go through the room.
+
+## A real run
+The crew made a 12-second reel, *The Golden Deer's Trap*, in this room on 7 November 2026, with one human director. It took 3 stills, 3 Kling clips, 3 Kannada voice lines and one music track, for about $2.60 in Gulab credits against a $5 cap. The shot list is in [`productions/golden-deer/shots.json`](productions/golden-deer/shots.json).
 
 ## Run it
 Built on macOS (Apple silicon). You need [Docker](https://docs.docker.com/get-started/get-docker/) running, Claude Code signed in (`claude auth login`), Python 3, `ffmpeg` and Pillow (`pip install pillow`).
@@ -85,7 +88,7 @@ To go live:
 
 **A Claude Code hook guards the money.** [`.claude/settings.json`](.claude/settings.json) runs `studio.py gate` around every paid Gulab tool. It blocks all of them in dry mode, blocks any model `studio.json` doesn't list, and blocks any call that would pass `budget_usd`. If the gate itself fails, the call is blocked too.
 
-Spend is estimated from the listed prices in `rates_usd` and recorded in `productions/ledger.jsonl`, so reconcile it with your Gulab balance.
+Spend is estimated from `rates_usd` and recorded in `productions/ledger.jsonl`. In the real run the estimate ran above the true charge, mostly on voice lines, but compare it with your Gulab balance.
 
 ## Credits
 The style bible and character sheets come from my earlier trailer, *Ramayana: The Anklet*. That trailer was not made in this room.

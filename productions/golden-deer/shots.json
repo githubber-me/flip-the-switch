@@ -1,0 +1,32 @@
+{
+  "title": "The Golden Deer's Trap",
+  "shots": [
+    {
+      "id": "s01",
+      "seconds": 4,
+      "picture": "Sita stands outdoors at the edge of a forest clearing; the golden deer grazes far across it, keeping its distance. No hut or dwelling in frame.",
+      "motion": "Real-time speed, NOT slow motion. Sita leans forward and points at the deer, her silver anklet bells chiming. Camera pushes in slightly across the clearing toward the deer. Keep the same look, no text, no new objects.",
+      "vo": "ಆ ಚಿನ್ನದ ಜಿಂಕೆಯನ್ನು ನೋಡಿ!",
+      "vo_english": "Look at that golden deer!",
+      "source": "invented"
+    },
+    {
+      "id": "s02",
+      "seconds": 4,
+      "picture": "Close on the golden deer's eye, calm and wide, still far across the clearing from Sita.",
+      "motion": "Real-time speed, NOT slow motion. The eye narrows unnaturally, pupil tightening to a thin slit, one action only. Camera holds steady, tight on the eye. Keep the same look, no text, no new objects.",
+      "vo": "ಇಲ್ಲಿ ಏನೋ ಮೋಸವಿದೆ",
+      "vo_english": "There is some deceit here (narration, not Sita's spoken line)",
+      "source": "invented"
+    },
+    {
+      "id": "s03",
+      "seconds": 4,
+      "picture": "Sita, still across the clearing from the deer, about to glance down between them, where her long shadow will fall beside the deer's bare, shadowless patch of ground.",
+      "motion": "Real-time speed, NOT slow motion. Sita glances down; camera pushes in on the ground to show her shadow beside the deer's shadowless patch, then cuts back to her face as her eyes widen with fear and she steps back. Mouth stays closed, narration plays over the shot. Keep the same look, no text, no new objects.",
+      "vo": "ಇದು ಜಿಂಕೆಯಲ್ಲ, ಮಾಯೆ!",
+      "vo_english": "This is not a deer, it is an illusion!",
+      "source": "invented"
+    }
+  ]
+}

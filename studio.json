@@ -17,7 +17,7 @@
     "music": "fal-ai/elevenlabs/music"
   },
   "rates_usd": {
-    "still": 0.096,
+    "still": 0.144,
     "clip_per_second": 0.1344,
     "voice": 0.048,
     "music": 0.48

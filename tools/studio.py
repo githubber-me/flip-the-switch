@@ -27,7 +27,6 @@ import subprocess
 import sys
 import textwrap
 import time
-import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PRODUCTIONS = ROOT / "productions"
@@ -153,9 +152,10 @@ def download(url, out):
     if not url.startswith(("https://", "http://")):
         raise StudioError(f"Not a web URL: {url}")
     out.parent.mkdir(parents=True, exist_ok=True)
-    request = urllib.request.Request(url, headers={"User-Agent": "flip-the-switch-studio/1.0"})
-    with urllib.request.urlopen(request, timeout=300) as response:
-        out.write_bytes(response.read())
+    # curl uses the system's certificates; some Python installs on macOS have none.
+    result = subprocess.run(["curl", "-fsSL", "--max-time", "300", "-A", "flip-the-switch-studio/1.0", "-o", str(out), url], capture_output=True, text=True)
+    if result.returncode:
+        raise StudioError(f"Download failed: {result.stderr.strip()[-300:]}")
 
 
 # ---------- dry-mode stand-ins ----------

@@ -27,7 +27,7 @@ class Project:
         (self.root / "tools").mkdir(parents=True)
         shutil.copy(REPO / "tools" / "studio.py", self.root / "tools")
         cfg = json.loads((REPO / "studio.json").read_text())
-        cfg.update(aspect="16:9", **overrides)
+        cfg.update({"mode": "dry", "aspect": "16:9", **overrides})
         (self.root / "studio.json").write_text(json.dumps(cfg))
         self.prod = self.root / "productions" / "t"
         self.prod.mkdir(parents=True)
