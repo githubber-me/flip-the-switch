@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^mcp__.*__(generate_image|generate_image_in_project|generate_video|generate_video_in_project|generate_audio)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/studio.py\" gate",
+            "onFailure": "block",
+            "statusMessage": "Checking the crew's budget"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "^mcp__.*__(generate_image|generate_image_in_project|generate_video|generate_video_in_project|generate_audio)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/studio.py\" gate"
+          }
+        ]
+      }
+    ]
+  }
+}

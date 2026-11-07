@@ -1,0 +1,21 @@
+{
+  "mode": "dry",
+  "budget_usd": 5,
+  "aspect": "9:16",
+  "gulab_board": null,
+  "ref_urls": {},
+  "voice": null,
+  "models": {
+    "still": "google/nano-banana-2.1",
+    "still_refs": "google/nano-banana-2.1/edit",
+    "clip": "fal-ai/kling-video/o3/standard/image-to-video",
+    "voice": "elevenlabs/tts/eleven-v4",
+    "music": "fal-ai/elevenlabs/music"
+  },
+  "rates_usd": {
+    "still": 0.096,
+    "clip_per_second": 0.1344,
+    "voice": 0.048,
+    "music": 0.48
+  }
+}

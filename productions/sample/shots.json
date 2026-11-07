@@ -1,0 +1,8 @@
+{
+  "title": "Sample production for trying the tools",
+  "shots": [
+    {"id": "s01", "seconds": 4, "picture": "Bare feet in silver anklets on wet river stones at dawn", "motion": "One slow step, the bells swing", "vo": "(the writer's Kannada line goes here)", "vo_english": "If you ever lose me, listen.", "source": "invented"},
+    {"id": "s02", "seconds": 4, "picture": "A golden deer between the trees, late sun", "motion": "It turns its head to camera", "vo": "(the writer's Kannada line goes here)", "vo_english": "Catch it for me?", "source": "paraphrased (Aranya Kanda)"},
+    {"id": "s03", "seconds": 4, "picture": "One anklet lying on dark earth, moonlight", "motion": "Slow push in, a single bell settles", "vo": "(the writer's Kannada line goes here)", "vo_english": "She is leaving a trail.", "source": "invented"}
+  ]
+}

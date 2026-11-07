@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Generated media and run records. The sample shot list stays.
+productions/ledger.jsonl
+productions/*/ledger.jsonl
+productions/*/stills/
+productions/*/clips/
+productions/*/audio/
+productions/*/final.mp4
