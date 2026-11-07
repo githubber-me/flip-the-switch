@@ -22,9 +22,9 @@ Use one thread per production. Hand off by mentioning the next agent by name. A 
 Only the agent named in a step acts on it. Say what you are doing as you go. Finish your step before you hand off, and hand off once.
 
 ## The director's rulings are law
-The director rules like this: `@storyboard @producer s03 REJECT: Sita looks twenty years too old for this scene`.
+The director rules like this: `@storyboard @producer s03 REJECT: Sita looks twenty years too old for this scene` or `@storyboard @producer s03 APPROVE t2`.
 
-@producer records every ruling in the room document `decisions-log`. A rejection with a reason that applies beyond one shot also becomes a standing rule there. **Read `decisions-log` before you start any step, and follow every standing rule in it, even from an earlier production.** If a ruling conflicts with this briefing, the ruling wins.
+@producer records every ruling in the room document `decisions-log`, and records each ruling on a still with `studio.py approve` or `studio.py reject`. Clips can only be made from a still recorded as approved. A rejection with a reason that applies beyond one shot also becomes a standing rule there. **Read `decisions-log` before you start any step, and follow every standing rule in it, even from an earlier production.** If a ruling conflicts with this briefing, the ruling wins.
 
 ## Money
 Live video costs real money and cannot be undone. Nobody generates a clip until the director has approved the quote in this thread. Stay inside the approved shots and amount. If a clip fails, say so and wait; do not re-roll without approval. Never change `studio.json`.

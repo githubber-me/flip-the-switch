@@ -1,4 +1,11 @@
 {
+  "permissions": {
+    "deny": [
+      "Edit(/studio.json)",
+      "Edit(/productions/ledger.jsonl)",
+      "Edit(/productions/*/approved.json)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

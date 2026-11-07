@@ -1,94 +1,96 @@
 # Film Crew Room
 
-One person directs a crew of AI agents that make short Kannada-narrated reels, working together in a [Switch](https://docs.switchagents.ai/switch-rooms/getting-started) room.
+Film Crew Room lets one person make a short film with a crew of AI agents while keeping the final say. The crew is six agents in one [Switch](https://docs.switchagents.ai/switch-rooms/getting-started) chat room. I post an idea, they do the work, and no video gets paid for until I say yes.
 
 Built for the Flip the Switch hackathon, Best Personal or Creative Workflow track.
 
-## The problem
-A regional-language creator is the writer, artist, editor and producer alone. AI tools help with each job, but they work in silos: every model call starts cold, and no tool knows what you rejected yesterday. Video generation also costs real money, so a bad shot is expensive to find out about.
+[![Three frames from the reel: Sita points at the golden deer, the deer's pupil narrows to a slit, Sita looks at her own shadow](docs/reel-strip.jpg)](docs/golden-deer.mp4)
 
-## What the room does
-You post a brief. The crew works in one thread:
+**[Watch the demo](https://youtu.be/OdDufmvuamY)** (about 2 minutes) or **[watch the reel](docs/golden-deer.mp4)** (12 seconds, Kannada narration)
 
-| Agent | Job | Who decides |
+## Why I built it
+
+In November 2026 I made a Ramayana trailer, working outside this room. It took 42 video prompts, about 28 hours start to finish, and $22.72 in generation costs.
+
+Two problems stood out. Every prompt had to describe the look from scratch, because a video model remembers nothing between calls. And each generated clip costs real money, so finding a mistake at the video stage is the expensive way to find it.
+
+A real film crew handles this with a shared brief, a script meeting, and a producer who watches the money. I wanted the same setup for one person working in Kannada.
+
+## How the first film got made
+
+This is what happened on *The Golden Deer's Trap*, made in the room on 7 November 2026.
+
+1. **The idea.** I asked for a 12-second reel in which Sita realises the golden deer is a trap.
+2. **The script.** The writer drafted three shots, and the critic found a real problem: Sita stands too far away to notice the deer's eye narrowing.
+3. **My ruling.** I replied, "narration is better, we must do it outdoors with no habitat/house involved." The writer turned the line into narration and took out the hut. The producer saved my ruling as a standing rule for the crew.
+4. **The pictures.** The storyboard artist made one still per shot, at about 14 cents each. I approved all three on the first try.
+5. **The bill.** Before any animation, the producer quoted $2.02 and showed what was left of my $5 limit. I approved it.
+6. **The animation.** The animator had to ask me in the room before making clips. It can't start on its own.
+7. **The final cut.** The editor added Kannada narration and music, then posted the finished reel in the thread.
+
+The whole reel cost about $2.60.
+
+| Shot | Kannada narration | Meaning |
 |---|---|---|
-| `writer` | Script and shot list | |
-| `critic` | Attacks the script | You rule on disputes |
-| `storyboard` | One cheap still per shot | You approve or reject each with a reason |
-| `producer` | Logs every ruling, quotes the cost | You approve the spend |
-| `animator` | Clips from approved stills only | You approve each paid clip on a permission card |
-| `editor` | Voice, music, final cut | |
+| 1 | ಆ ಚಿನ್ನದ ಜಿಂಕೆಯನ್ನು ನೋಡಿ! | Look at that golden deer! |
+| 2 | ಇಲ್ಲಿ ಏನೋ ಮೋಸವಿದೆ | There is some deceit here. |
+| 3 | ಇದು ಜಿಂಕೆಯಲ್ಲ, ಮಾಯೆ! | This is not a deer, it is an illusion! |
 
-**Your veto is the budget gate.** Stills cost about $0.14 each and a 5-second clip about $0.67, so you catch problems while they are cheap.
+## The crew
 
-## How Switch is used
-Without Switch there is no workflow here, only a command-line tool.
+| Agent | What they do | Where I step in |
+|---|---|---|
+| Writer | Writes the script and shot list | |
+| Critic | Looks for problems in the script | I settle disagreements |
+| Storyboard artist | Makes one cheap still per shot | I approve or reject each one, with a reason |
+| Producer | Records my decisions and quotes costs | I approve the spending |
+| Animator | Turns approved stills into video clips | I answer a permission request in the room |
+| Editor | Adds voice and music, cuts the final film | |
 
-| Switch feature | Role in the crew |
-|---|---|
-| **Room and threads** | Every agent and the director work in one channel. Handoffs happen by mention, so each agent starts when the last one finishes. |
-| **Room instructions** | The style bible and working rules. Every agent gets them on joining ([`crew/ROOM-INSTRUCTIONS.md`](crew/ROOM-INSTRUCTIONS.md)). |
-| **Room document** | `decisions-log`: every ruling, with your reason, plus standing rules. It lives in the room, so it outlasts any agent's session. |
-| **Permission cards** | The animator runs with Auto mode off, so a paid clip waits for your answer in the room. The card appears in the animator's thread. Choose **Allow once** on `generate_video`. |
-| **Attachments** | Stills and the final cut are reviewed in the thread. |
+## Why it needs Switch
 
-```mermaid
-flowchart LR
-  D([Director]) <-->|brief, rulings, approvals| R
-  subgraph R[Switch room]
-    I[Room instructions: style bible]
-    L[decisions-log document]
-  end
-  R <--> W[writer]
-  R <--> C[critic]
-  R <--> S[storyboard]
-  R <--> P[producer]
-  R <--> A[animator]
-  R <--> E[editor]
-  S & A & E & P --> T[tools/studio.py]
-  T -->|dry mode| F[Local placeholders, no credits]
-  T -->|live mode: prints the exact call| H{{Budget gate hook}}
-  H -->|within cap, approved model| G[Gulab MCP: images, Kling video, voice, music]
-```
+The media tools are a small script. Switch is what makes these agents a crew:
 
-The agents share this repository for heavy media files in `productions/<slug>/`. Decisions, handoffs and approvals go through the room.
+- **They work in one conversation.** When one agent finishes, it mentions the next one by name, and I can read and step into every handoff.
+- **They all get the same brief.** The film's look, the characters and the working rules sit in the room's instructions, so nobody needs them explained again.
+- **My decisions live in the room.** The producer keeps them in a room document called `decisions-log`, and agents read it before each job. It stays in the room when an agent's session ends.
+- **The animator has to ask first.** With Auto mode off, a request to spend money shows up in the room as a permission card, and the work waits for my answer.
+- **I review everything in one place.** Stills and the final cut arrive in the thread as attachments.
 
-## A real run
-The crew made a 12-second reel, *The Golden Deer's Trap*, in this room on 7 November 2026, with one human director. It took 3 stills, 3 Kling clips, 3 Kannada voice lines and one music track, for about $2.60 in Gulab credits against a $5 cap. The shot list is in [`productions/golden-deer/shots.json`](productions/golden-deer/shots.json).
+## Try it
 
-## Run it
-Built on macOS (Apple silicon). You need [Docker](https://docs.docker.com/get-started/get-docker/) running, Claude Code signed in (`claude auth login`), Python 3, `ffmpeg` and Pillow (`pip install pillow`).
+You can see the pipeline work in about two minutes, with no accounts and no credits. You need Python 3, `ffmpeg` and Pillow.
 
-**1. Check the tools without Switch:**
 ```bash
-python3 -m unittest discover tests
+git clone https://github.com/githubber-me/flip-the-switch.git
+```
+```bash
+cd flip-the-switch
+```
+```bash
+pip3 install pillow
+```
+```bash
+for s in s01 s02 s03; do
+  python3 tools/studio.py still sample $s --prompt "Shot $s of the sample film"
+  python3 tools/studio.py approve sample $s 1
+  python3 tools/studio.py clip sample $s --prompt "Slow push in"
+  python3 tools/studio.py voice sample $s --text "a test line"
+done
+python3 tools/studio.py music sample --prompt "soft drums" --seconds 12
+python3 tools/studio.py cut sample
 ```
 
-**2. Set up Switch.** [Install Switch Console](https://docs.switchagents.ai/switch-rooms/getting-started/install-switch-console), choose **On this computer** and start the local server.
+This makes a practice film at `productions/sample/final.mp4`, using title cards and silent audio in place of generated pictures and sound.
 
-**3. Create the crew.** Add the six agents in [`crew/agents.md`](crew/agents.md), with this repository as each one's Directory.
+To run the full crew in Switch, or to generate real pictures and video, follow the **[setup guide](docs/setup.md)**. Practice mode is the default, so nothing costs money until you turn it off.
 
-**4. Create the room.** Under **Your Rooms**, choose **Create room**, pick Mattermost and paste [`crew/ROOM-INSTRUCTIONS.md`](crew/ROOM-INSTRUCTIONS.md) into **Instructions**. Then add all six agents.
+## What isn't finished
 
-**5. Give the crew a brief:**
-```text
-@writer new production, slug test-01. A 12-second reel: Sita realises the golden deer is a trap.
-```
-Then rule on what the crew brings you.
-
-## Dry mode and live mode
-**Dry mode is the default and costs no credits.** You need no Gulab account. Stills are labelled cards showing the prompt, clips are slow zooms over them, and audio is silent, so the whole workflow runs, including every human gate.
-
-To go live:
-1. Connect Gulab as a claude.ai connector on the account Claude Code uses, then check it appears:
-   ```bash
-   claude mcp list
-   ```
-2. In `studio.json`, set `"mode": "live"`, set `gulab_board` to a Gulab project id, and add the hosted URL of each `bible/` sheet to `ref_urls`.
-
-**A Claude Code hook guards the money.** [`.claude/settings.json`](.claude/settings.json) runs `studio.py gate` around every paid Gulab tool. It blocks all of them in dry mode, blocks any model `studio.json` doesn't list, and blocks any call that would pass `budget_usd`. If the gate itself fails, the call is blocked too.
-
-Spend is estimated from `rates_usd` and recorded in `productions/ledger.jsonl`. In the real run the estimate ran above the true charge, mostly on voice lines, but compare it with your Gulab balance.
+- **The money checks catch mistakes, but they aren't locks.** A clip can only be made from a still the producer has recorded as approved, and agents are blocked from editing the budget. An agent set on getting around this could still run a script of its own.
+- **The $5 limit relies on estimates.** It adds up listed prices rather than reading my real balance. On this run the estimate came to about 50 cents more than the actual charge.
+- **Three shots is the tested size.** I set the crew up for 12-second reels to stay under my budget, and longer films haven't been tried.
 
 ## Credits
-The style bible and character sheets come from my earlier trailer, *Ramayana: The Anklet*. That trailer was not made in this room.
+
+The style guide and character sheets come from my earlier trailer, *Ramayana: The Anklet*, which was not made in this room. Pictures, video and audio were generated through [Gulab](https://gulab.ai).

@@ -9,8 +9,10 @@ Settings live in a file because Switch passes agents only a fixed set of environ
 
   studio.py status
   studio.py still SLUG SHOT --prompt "..." [--ref bible/sheet_heroes.png ...]
+  studio.py approve SLUG SHOT TAKE
+  studio.py reject  SLUG SHOT
   studio.py quote SLUG [SHOT ...]
-  studio.py clip  SLUG SHOT --prompt "..."
+  studio.py clip  SLUG SHOT --prompt "..."  (animates the approved take, never just the newest)
   studio.py voice SLUG SHOT --text "..."
   studio.py music SLUG --prompt "..." --seconds 25
   studio.py save  SLUG still|clip|voice|music [SHOT] --url URL
@@ -101,6 +103,36 @@ def clip_seconds(shot):
     return max(MIN_CLIP_SECONDS, math.ceil(shot["seconds"]) + LEAD_IN_SECONDS)
 
 
+# ---------- approvals ----------
+
+def approvals(slug):
+    path = production(slug) / "approved.json"
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def save_approvals(slug, approved):
+    (production(slug) / "approved.json").write_text(json.dumps(approved, indent=1) + "\n")
+
+
+def approved_still(slug, shot_id):
+    name = approvals(slug).get(shot_id)
+    if not name:
+        raise StudioError(f"No approved still for {shot_id}. Clips only come from approved stills: "
+                          "the producer records the director's approval with studio.py approve.")
+    return production(slug) / "stills" / name
+
+
+def approved_urls():
+    """The hosted address of every approved still, so the gate can refuse a clip from anything else."""
+    urls = set()
+    for record in PRODUCTIONS.glob("*/approved.json"):
+        for name in json.loads(record.read_text()).values():
+            source = (record.parent / "stills" / name).with_suffix(".url")
+            if source.exists():
+                urls.add(source.read_text().strip())
+    return urls
+
+
 # ---------- money ----------
 
 def spent():
@@ -135,6 +167,17 @@ def gulab_cost(cfg, tool, call):
         key = {"speech": "voice", "music": "music"}.get(call.get("kind"))
         if not key or model != models[key]:
             raise StudioError(f"Audio is speech with {models['voice']} or music with {models['music']}.")
+        # Audio is estimated at a flat rate, so its length has to be limited for the estimate to mean anything.
+        limits = cfg["limits"]
+        if key == "music":
+            try:
+                seconds = float(call["duration"])
+            except (KeyError, TypeError, ValueError):
+                raise StudioError("A music call must state its duration in seconds.")
+            if not 0 < seconds <= limits["music_seconds"]:
+                raise StudioError(f"Music is limited to {limits['music_seconds']} seconds, not {seconds:g}.")
+        elif len(call.get("text", "")) > limits["voice_chars"]:
+            raise StudioError(f"A voice line is limited to {limits['voice_chars']} characters.")
         return rates[key]
     raise StudioError(f"{tool} is not a paid tool this crew uses.")
 
@@ -221,6 +264,25 @@ def cmd_still(args, cfg):
         print(out.relative_to(ROOT))
 
 
+def cmd_approve(args, cfg):
+    find_shot(args.slug, args.shot)
+    name = f"{args.shot}_t{args.take}.png"
+    if not (production(args.slug) / "stills" / name).exists():
+        raise StudioError(f"There is no still {name} in {args.slug}.")
+    approved = approvals(args.slug)
+    approved[args.shot] = name
+    save_approvals(args.slug, approved)
+    print(f"{args.shot} approved: {name}")
+
+
+def cmd_reject(args, cfg):
+    find_shot(args.slug, args.shot)
+    approved = approvals(args.slug)
+    approved.pop(args.shot, None)
+    save_approvals(args.slug, approved)
+    print(f"{args.shot} has no approved still")
+
+
 def cmd_quote(args, cfg):
     shots = [s for s in load_shots(args.slug) if not args.shots or s["id"] in args.shots]
     rate = cfg["rates_usd"]["clip_per_second"]
@@ -233,13 +295,14 @@ def cmd_quote(args, cfg):
     left = cfg["budget_usd"] - spent()
     print(f"TOTAL ${total:.2f} for {len(shots)} clips. Spent ${spent():.2f}, cap ${cfg['budget_usd']:.2f}, ${left:.2f} left.")
     print("WITHIN CAP" if total <= left else "OVER CAP: the director must cut shots or raise the cap")
+    waiting = [s["id"] for s in shots if s["id"] not in approvals(args.slug)]
+    if waiting:
+        print("NOT APPROVED YET: " + ", ".join(waiting) + ". These cannot be animated until the director approves a still.")
 
 
 def cmd_clip(args, cfg):
     shot = find_shot(args.slug, args.shot)
-    still = latest(production(args.slug) / "stills", args.shot, ".png")
-    if not still:
-        raise StudioError(f"No still for {args.shot}. Clips only come from approved stills.")
+    still = approved_still(args.slug, args.shot)
     folder = production(args.slug) / "clips"
     seconds = clip_seconds(shot)
     if is_live(cfg):
@@ -325,6 +388,8 @@ def cmd_gate(args, cfg):
                 handle.write(json.dumps(row) + "\n")
         else:
             check_budget(cfg, cost)
+            if tool.startswith("generate_video") and call.get("image_url") not in approved_urls():
+                raise StudioError("Clips only come from approved stills, and this image_url is not one.")
     except StudioError as error:
         print(f"BLOCKED: {error}", file=sys.stderr)
         sys.exit(2)
@@ -381,6 +446,12 @@ def main():
     p = sub.add_parser("still")
     p.add_argument("slug"); p.add_argument("shot"); p.add_argument("--prompt", required=True); p.add_argument("--ref", action="append", default=[])
     p.set_defaults(run=cmd_still)
+    p = sub.add_parser("approve")
+    p.add_argument("slug"); p.add_argument("shot"); p.add_argument("take", type=int)
+    p.set_defaults(run=cmd_approve)
+    p = sub.add_parser("reject")
+    p.add_argument("slug"); p.add_argument("shot")
+    p.set_defaults(run=cmd_reject)
     p = sub.add_parser("quote")
     p.add_argument("slug"); p.add_argument("shots", nargs="*")
     p.set_defaults(run=cmd_quote)
@@ -402,7 +473,13 @@ def main():
     args = parser.parse_args()
     try:
         args.run(args, config())
-    except StudioError as error:
+    except Exception as error:
+        # The gate fails closed: Claude Code only treats exit 2 as a block, so a crash must not exit any other way.
+        if args.command == "gate":
+            print(f"BLOCKED: the budget gate could not check this call ({error!r}). Tell the director.", file=sys.stderr)
+            sys.exit(2)
+        if not isinstance(error, StudioError):
+            raise
         print(f"ERROR: {error}", file=sys.stderr)
         sys.exit(1)
 

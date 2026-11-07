@@ -21,5 +21,9 @@
     "clip_per_second": 0.1344,
     "voice": 0.048,
     "music": 0.48
+  },
+  "limits": {
+    "music_seconds": 30,
+    "voice_chars": 300
   }
 }
